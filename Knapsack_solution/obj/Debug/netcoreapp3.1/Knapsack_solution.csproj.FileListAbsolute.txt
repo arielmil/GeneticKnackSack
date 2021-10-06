@@ -1,0 +1,13 @@
+/home/ariel/Desktop/8o_periodo/AI/Genetic_programming/Genetic_algorithm/Knapsack_problem/Knapsack_solution/Knapsack_solution/bin/Debug/netcoreapp3.1/Knapsack_solution
+/home/ariel/Desktop/8o_periodo/AI/Genetic_programming/Genetic_algorithm/Knapsack_problem/Knapsack_solution/Knapsack_solution/bin/Debug/netcoreapp3.1/Knapsack_solution.deps.json
+/home/ariel/Desktop/8o_periodo/AI/Genetic_programming/Genetic_algorithm/Knapsack_problem/Knapsack_solution/Knapsack_solution/bin/Debug/netcoreapp3.1/Knapsack_solution.runtimeconfig.json
+/home/ariel/Desktop/8o_periodo/AI/Genetic_programming/Genetic_algorithm/Knapsack_problem/Knapsack_solution/Knapsack_solution/bin/Debug/netcoreapp3.1/Knapsack_solution.runtimeconfig.dev.json
+/home/ariel/Desktop/8o_periodo/AI/Genetic_programming/Genetic_algorithm/Knapsack_problem/Knapsack_solution/Knapsack_solution/bin/Debug/netcoreapp3.1/Knapsack_solution.dll
+/home/ariel/Desktop/8o_periodo/AI/Genetic_programming/Genetic_algorithm/Knapsack_problem/Knapsack_solution/Knapsack_solution/bin/Debug/netcoreapp3.1/Knapsack_solution.pdb
+/home/ariel/Desktop/8o_periodo/AI/Genetic_programming/Genetic_algorithm/Knapsack_problem/Knapsack_solution/Knapsack_solution/obj/Debug/netcoreapp3.1/Knapsack_solution.csprojAssemblyReference.cache
+/home/ariel/Desktop/8o_periodo/AI/Genetic_programming/Genetic_algorithm/Knapsack_problem/Knapsack_solution/Knapsack_solution/obj/Debug/netcoreapp3.1/Knapsack_solution.AssemblyInfoInputs.cache
+/home/ariel/Desktop/8o_periodo/AI/Genetic_programming/Genetic_algorithm/Knapsack_problem/Knapsack_solution/Knapsack_solution/obj/Debug/netcoreapp3.1/Knapsack_solution.AssemblyInfo.cs
+/home/ariel/Desktop/8o_periodo/AI/Genetic_programming/Genetic_algorithm/Knapsack_problem/Knapsack_solution/Knapsack_solution/obj/Debug/netcoreapp3.1/Knapsack_solution.csproj.CoreCompileInputs.cache
+/home/ariel/Desktop/8o_periodo/AI/Genetic_programming/Genetic_algorithm/Knapsack_problem/Knapsack_solution/Knapsack_solution/obj/Debug/netcoreapp3.1/Knapsack_solution.dll
+/home/ariel/Desktop/8o_periodo/AI/Genetic_programming/Genetic_algorithm/Knapsack_problem/Knapsack_solution/Knapsack_solution/obj/Debug/netcoreapp3.1/Knapsack_solution.pdb
+/home/ariel/Desktop/8o_periodo/AI/Genetic_programming/Genetic_algorithm/Knapsack_problem/Knapsack_solution/Knapsack_solution/obj/Debug/netcoreapp3.1/Knapsack_solution.genruntimeconfig.cache
