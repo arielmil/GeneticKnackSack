@@ -20,36 +20,18 @@ namespace Knapsack_solution {
         
         public Backpack Solve() {
             int i = 0;
-            int oldBestIsStillBestTimes = 0;
             
             generateFirstGeneration();
             
-            Chromossome oldBest = Best;
-            float oldBestFitnessScore;
-            
-            while (true) {
-                oldBestFitnessScore = fit(oldBest);
+            while (i < maxAllowedGeneration) {
+                if (i % 2 == 0) {
+                    generateFirstGeneration();
+                }
                 generateNextGeneration();
-
-                if (oldBestFitnessScore == bestScore) {
-                    oldBestIsStillBestTimes++;
-                }
-
-                else {
-                    if (oldBestIsStillBestTimes > 0) {
-                        oldBestIsStillBestTimes--;
-                        oldBest = Best;
-                    }
-                }
-
-
-                if (oldBestIsStillBestTimes == 20) {
-                    break;
-                }
-                //i++;
+                i = i + 2;
             }
             
-            //Console.WriteLine($"Best solution fitness is: {bestScore}");
+            Console.WriteLine($"Best solution fitness is: {bestScore}");
             return Chromossome.decodeChromossome(Best);
         }
         
@@ -58,13 +40,19 @@ namespace Knapsack_solution {
             for (i = 0; i < maxAllowedGeneration; i++) {
                 createNewBeing();
             }
-
-            fitGenerationAndReturnTotalFitness();
         }
-
-        private float fitGenerationAndReturnTotalFitness() {
+        
+        //Roulette like method
+        void generateNextGeneration(int maxPopulationSize = 998) {
+            int i;
+            
+            Console.WriteLine($"Best score so far: {bestScore}");
+            
             float totalFitness = 0.0f;
             float beingFitness;
+            float drawnFloat;
+
+            float bestGenerationScore = 0.0f;
             
             foreach (Chromossome c in Population) {
                 beingFitness = fit(c);
@@ -74,23 +62,16 @@ namespace Knapsack_solution {
                     bestScore = beingFitness;
                     Best = c;
                 }
+
+                if (beingFitness > bestGenerationScore) {
+                    bestGenerationScore = beingFitness;
+                }
                 
                 PopulationBreedingChances.Add(new BreedingChance(c, beingFitness));
             }
-
-            return totalFitness;
-        }
-        
-        //Roulette like method
-        void generateNextGeneration(int maxPopulationSize = 998) {
-            int i;
             
-            Console.WriteLine($"Best score so far: {bestScore}");
-            float totalFitness;
-            float drawnFloat;
+            Console.WriteLine($"Best Generation's score: {bestGenerationScore}");
 
-            totalFitness = fitGenerationAndReturnTotalFitness();
-            
             BreedingChance bc;
             for (i = 0; i < PopulationBreedingChances.Count; i++) {
                 bc = PopulationBreedingChances[i];
@@ -100,7 +81,7 @@ namespace Knapsack_solution {
                 
                 if (bc.breedingChance >= drawnFloat) {
                     if (currentPopulationSize >= maxPopulationSize) {
-                        kill100LowestsFitnessScoresBeings();
+                        killLowestsFitnessScoresBeings(500);
                     }
                     breed(Best, bc.chromossome, 10, 0.02f);
                 }
@@ -123,7 +104,7 @@ namespace Knapsack_solution {
             return !(bp.currentWeight > bp.capacity);
         }
         
-        private void createNewBeing(float probability = 0.1f) {
+        private void createNewBeing(float probability = 0.5f) {
             int i;
             
             float drawnFloat;
@@ -207,14 +188,14 @@ namespace Knapsack_solution {
             currentPopulationSize = Population.Count;
         }
         
-        private void kill100LowestsFitnessScoresBeings() {
+        private void killLowestsFitnessScoresBeings(int range) {
             int i = 0;
             
             PopulationBreedingChances.Sort(BreedingChance.OrderByFitnessScore);
             Chromossome c;
 
             foreach (BreedingChance bc in PopulationBreedingChances) {
-                if (i == 100) {
+                if (i == range) {
                     break;
                 }
                 

@@ -71,6 +71,17 @@ namespace Knapsack_solution {
             }
         }
 
+        public void openBackpack() {
+            Console.WriteLine("This Backpack contains the following items:");
+            foreach (Item item in Items) {
+                if (item != null) {
+                    Console.WriteLine($"    Item name: {item.Name}, Item weight: {item.weight}, Item value: {item.value}");
+                }
+                
+            }
+            
+        }
+        
         private static int getItemNameInItemmsNames(string itemName) {
             return Array.IndexOf(ItemsNames, itemName);
         }
