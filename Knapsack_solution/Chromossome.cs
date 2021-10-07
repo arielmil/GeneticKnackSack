@@ -30,7 +30,7 @@ namespace Knapsack_solution {
 
             Backpack bp = new Backpack();
 
-            for (i = 0; i < 22; i++) {
+            for (i = 0; i < 37; i++) {
 
                 if (c.encodedChromossome[i]) {
                     name = Backpack.getNameInPosition(i);
@@ -42,7 +42,7 @@ namespace Knapsack_solution {
         }
 
         public void changeGene(int geneNumber) {
-            if (geneNumber >= 0 && geneNumber <= 22) {
+            if (geneNumber >= 0 && geneNumber <= 37) {
                 encodedChromossome[geneNumber] = !encodedChromossome[geneNumber];
             }
 

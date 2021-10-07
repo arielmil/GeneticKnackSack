@@ -5,7 +5,7 @@ using System.Linq;
 namespace Knapsack_solution {
     public class Backpack {
         public int itemsQuantity { get; private set; }
-        public float capacity { get; } = 77.7f;
+        public float capacity { get; } = 89.0f;
         public float currentWeight { get; private set; } = 0.0f;
         public float currentValue { get; private set; } = 0.0f;
         public Item[] Items { get; private set; }
@@ -13,25 +13,27 @@ namespace Knapsack_solution {
         private static readonly string[] ItemsNames = {
             "Medieval armor", "Television", "Hammer", "Notebook", "Toaster", "Meat", "Watermelon", "Coconut",
             "Surf Board", "Skate Board", "Electric warmer", "Cup", "Pencil case", "Canvas", "Sandwich", 
-            "Lettuce", "Tomato", "Cellphone", "Cellphone Charger", "Bread", "Butter", "How to Win Friends and Influence People"
+            "Lettuce", "Tomato", "Cellphone", "Cellphone Charger", "Bread", "Butter", "How to Win Friends and Influence People", "Banana", "Knife",
+            "Mouse", "Gold bar", "Paper", "Shield", "Osmium", "Coin", "Map", "Folding Chair", "Gun", "Bullets", "Playstation 4", "Resident Evil 3 Remake",
+             "Diamond"
         };
 
         private float[] ItemsWeights = {30.0f, 22.0f, 15.0f, 12.9f, 11.5f, 10.9f, 7.8f, 7.5f
             ,7.2f, 6.4f, 6.3f, 4.3f, 3.2f, 3.0f, 2.5f,
-            2.2f, 2.0f, 1.5f, 1.3f, 1.0f, 0.9f, 0.5f
+            2.2f, 2.0f, 1.5f, 1.3f, 1.0f, 0.9f, 0.5f, 0.5f, 3.7f, 1.5f, 10.0f, 0.5f, 15.0f, 30.0f, 0.1f, 0.1f, 7.0f, 2.5f, 1.2f, 3.0f, 1.2f, 0.5f
         };
 
         private float[] ItemsValues = {
             20.0f, 19.0f, 15.0f, 19.0f, 5.0f, 9.0f, 4.5f, 5.9f, 
             2.4f, 3.4f, 9.1f, 0.5f, 2.1f, 2.1f, 3.0f, 0.5f, 0.3f, 
-            15.0f, 15.0f, 9.5f, 7.8f, 5.5f
+            15.0f, 15.0f, 9.5f, 7.8f, 5.5f, 2.3f, 22.0f, 1.2f, 25.0f, 6.0f, 9.5f, 0.1f, 7.0f, 10.0f, 4.5f, 10.0f, 9.5f, 14.0f, 2.3f, 15.0f
         };
         
         public Backpack() {
             itemsQuantity = 0;
             currentWeight = 0.0f;
             currentValue = 0.0f;
-            Items = new Item[22];
+            Items = new Item[37];
         }
 
         public bool IsItemInBackpack(Item item) {
@@ -74,7 +76,7 @@ namespace Knapsack_solution {
         }
 
         public static string getNameInPosition(int pos) {
-            if (pos >= 0 && pos <= 22) {
+            if (pos >= 0 && pos <= 37) {
                 return ItemsNames[pos];
             }
             else {

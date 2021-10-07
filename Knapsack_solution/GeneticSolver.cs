@@ -70,7 +70,7 @@ namespace Knapsack_solution {
                     if (currentPopulationSize >= maxPopulationSize) {
                         kill100LowestsFitnessScoresBeings();
                     }
-                    breed(Best, bc.chromossome);
+                    breed(Best, bc.chromossome, 10, 0.07f);
                 }
                 
             }
@@ -91,16 +91,16 @@ namespace Knapsack_solution {
             return !(bp.currentWeight > bp.capacity);
         }
         
-        private void createNewBeing(float probability = 0.1f) {
+        private void createNewBeing(float probability = 0.7f) {
             int i;
             
             float drawnFloat;
             
-            bool[] encodedChromossome = new bool[22];
+            bool[] encodedChromossome = new bool[37];
             
             Chromossome c;
             
-            for (i = 0; i < 22; i++) {
+            for (i = 0; i < 37; i++) {
                 drawnFloat = (float)Randomizer.NextDouble();
                 
                 if (probability >= drawnFloat) {
@@ -122,16 +122,16 @@ namespace Knapsack_solution {
             addNewChromossomeToPopulation(c2);
         }
         
-        private void mutate(Chromossome c, float probability = 0.02f) {
+        private void mutate(Chromossome c, float probability) {
             float drawnFloat = (float)Randomizer.NextDouble();
-            int drawnInt = Randomizer.Next(0, 22);
+            int drawnInt = Randomizer.Next(0, 37);
             
             if (probability >= drawnFloat) {
                c.changeGene(drawnInt);
             }
         }
 
-        private void breed(Chromossome father, Chromossome mother, int slicingIndex = 10) {
+        private void breed(Chromossome father, Chromossome mother, int slicingIndex = 10, float probability = 0.05f) {
             int i;
             
             Chromossome son1;
@@ -140,8 +140,8 @@ namespace Knapsack_solution {
             bool[] encodedFatherChromossome;
             bool[] encodedMotherChromossome;
 
-            bool[] encodedSon1Chromossome = new bool[22];
-            bool[] encodedSon2Chromossome = new bool[22];
+            bool[] encodedSon1Chromossome = new bool[37];
+            bool[] encodedSon2Chromossome = new bool[37];
             
             encodedFatherChromossome = father.encodedChromossome;
             encodedMotherChromossome = mother.encodedChromossome;
@@ -159,8 +159,8 @@ namespace Knapsack_solution {
             son1 = new Chromossome(encodedSon1Chromossome);
             son2 = new Chromossome(encodedSon2Chromossome);
             
-            mutate(son1, 0.02f);
-            mutate(son2, 0.02f);
+            mutate(son1, probability);
+            mutate(son2, probability);
             
             addNewChromossomeToPopulation(son1);
             addNewChromossomeToPopulation(son2);
