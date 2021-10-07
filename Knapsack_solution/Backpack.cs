@@ -6,8 +6,8 @@ namespace Knapsack_solution {
     public class Backpack {
         public int itemsQuantity { get; private set; }
         public float capacity { get; } = 77.7f;
-        public float currentWeight { get; private set; }
-        public float currentValue { get; private set; }
+        public float currentWeight { get; private set; } = 0.0f;
+        public float currentValue { get; private set; } = 0.0f;
         public Item[] Items { get; private set; }
 
         private static readonly string[] ItemsNames = {
@@ -44,6 +44,8 @@ namespace Knapsack_solution {
             
             if (pos != -1) {
                 Items[pos] = new Item(itemName, ItemsWeights[pos], ItemsValues[pos]);
+                currentWeight = currentWeight + Items[pos].weight;
+                currentValue = currentValue + Items[pos].value;
             }
             else {
                 throw (new Exception("Error: Invalid item name !"));
@@ -58,6 +60,9 @@ namespace Knapsack_solution {
                 i.Name = "None";
                 i.weight = 0.0f;
                 i.value = 0.0f;
+                
+                currentWeight = currentWeight - Items[pos].weight;
+                currentValue = currentValue - Items[pos].value;
             }
             else {
                 throw (new Exception("Error: Invalid item name !"));

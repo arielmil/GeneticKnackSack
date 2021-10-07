@@ -7,6 +7,7 @@ namespace Knapsack_solution
         static void Main(string[] args) {
             GeneticSolver GS = new GeneticSolver();
             Backpack solution = GS.Solve();
+            int i = 1;
         }
     }
 }

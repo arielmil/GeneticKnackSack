@@ -9,36 +9,39 @@ namespace Knapsack_solution {
         private List <BreedingChance> PopulationBreedingChances = new List<BreedingChance>();
         private Random Randomizer = new Random();
         
-        private int currentPpulationSize = 0;
-        private int maxGeneration;
+        private int currentPopulationSize = 0;
+        private int maxAllowedGeneration;
 
         private float bestScore = 0.0f;
 
-        public GeneticSolver(int maxPopulationSize = 1000, int maxGeneration = 100) {
-            this.maxGeneration = maxGeneration;
+        public GeneticSolver(int maxPopulationSize = 1000, int maxAllowedGeneration = 100) {
+            this.maxAllowedGeneration = maxAllowedGeneration;
         }
         
         public Backpack Solve() {
             int i = 0;
             
             generateFirstGeneration();
-            while (i < maxGeneration) {
+            while (i < maxAllowedGeneration) {
                 generateNextGeneration();
+                i++;
             }
             
-            Console.WriteLine($"Best solution fitness is: {bestScore}");
+            //Console.WriteLine($"Best solution fitness is: {bestScore}");
             return Chromossome.decodeChromossome(Best);
         }
         
         void generateFirstGeneration() {
             int i;
-            for (i = 0; i < maxGeneration; i++) {
+            for (i = 0; i < maxAllowedGeneration; i++) {
                 createNewBeing();
             }
         }
         
         //Roulette like method
         void generateNextGeneration(int maxPopulationSize = 998) {
+            int i;
+            
             Console.WriteLine($"Best score so far: {bestScore}");
             float totalFitness = 0.0f;
             float beingFitness;
@@ -55,31 +58,31 @@ namespace Knapsack_solution {
                 
                 PopulationBreedingChances.Add(new BreedingChance(c, beingFitness));
             }
-            
-            foreach (BreedingChance bc in PopulationBreedingChances) {
-                // ReSharper disable once NotAccessedVariable --> Ver por que não está reconhecendo
-                BreedingChance BC = bc;
+
+            BreedingChance bc;
+            for (i = 0; i < PopulationBreedingChances.Count; i++) {
+                bc = PopulationBreedingChances[i];
                 
-                BC.breedingChance = (bc.fitnessScore / totalFitness);
+                bc.breedingChance = (bc.fitnessScore / totalFitness);
                 drawnFloat = (float) Randomizer.NextDouble();
                 
                 if (bc.breedingChance >= drawnFloat) {
-                    if (currentPpulationSize >= maxPopulationSize) {
+                    if (currentPopulationSize >= maxPopulationSize) {
                         kill100LowestsFitnessScoresBeings();
                     }
                     breed(Best, bc.chromossome);
                 }
+                
             }
-            
         }
         
         private static float fit(Chromossome c) {
             Backpack bp = Chromossome.decodeChromossome(c);
-            if (!isValidSolution(c)) {
+            if (isValidSolution(c)) {
                 return bp.currentValue;
             }
             
-            Console.WriteLine($"Invalid Solution !");
+            //Console.WriteLine($"Invalid Solution !");
             return 0.0f;
         }
         
@@ -88,7 +91,7 @@ namespace Knapsack_solution {
             return !(bp.currentWeight > bp.capacity);
         }
         
-        private void createNewBeing(float probability = 0.5f) {
+        private void createNewBeing(float probability = 0.1f) {
             int i;
             
             float drawnFloat;
@@ -156,8 +159,8 @@ namespace Knapsack_solution {
             son1 = new Chromossome(encodedSon1Chromossome);
             son2 = new Chromossome(encodedSon2Chromossome);
             
-            mutate(son1);
-            mutate(son2);
+            mutate(son1, 0.02f);
+            mutate(son2, 0.02f);
             
             addNewChromossomeToPopulation(son1);
             addNewChromossomeToPopulation(son2);
@@ -165,12 +168,12 @@ namespace Knapsack_solution {
 
         void addNewChromossomeToPopulation(Chromossome c) {
             Population.Add(c);
-            currentPpulationSize = Population.Count;
+            currentPopulationSize = Population.Count;
         }
 
         private void kill(Chromossome c) {
             Population.Remove(c);
-            currentPpulationSize = Population.Count;
+            currentPopulationSize = Population.Count;
         }
 
         private void kill100LowestsFitnessScoresBeings() {
