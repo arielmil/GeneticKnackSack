@@ -83,7 +83,7 @@ namespace Knapsack_solution {
                     if (currentPopulationSize >= maxPopulationSize) {
                         killLowestsFitnessScoresBeings(500);
                     }
-                    breed(Best, bc.chromossome, 10, 0.02f);
+                    breed(Best, bc.chromossome, 0.05f);
                 }
                 
             }
@@ -104,7 +104,7 @@ namespace Knapsack_solution {
             return !(bp.currentWeight > bp.capacity);
         }
         
-        private void createNewBeing(float probability = 0.5f) {
+        private void createNewBeing(float itemAcceptanceProbability = 0.5f) {
             int i;
             
             float drawnFloat;
@@ -116,7 +116,7 @@ namespace Knapsack_solution {
             for (i = 0; i < 37; i++) {
                 drawnFloat = (float)Randomizer.NextDouble();
                 
-                if (probability >= drawnFloat) {
+                if (itemAcceptanceProbability >= drawnFloat) {
                     encodedChromossome[i] = true;
                 }
                 else {
@@ -143,7 +143,7 @@ namespace Knapsack_solution {
             }
         }
 
-        private void breed(Chromossome father, Chromossome mother, int slicingIndex = 10, float probability = 0.2f) {
+        private void breed(Chromossome father, Chromossome mother, int slicingIndex = 10, float mutationProbability = 0.2f) {
             int i;
             
             Chromossome son1;
@@ -171,11 +171,75 @@ namespace Knapsack_solution {
             son1 = new Chromossome(encodedSon1Chromossome);
             son2 = new Chromossome(encodedSon2Chromossome);
             
-            mutate(son1, probability);
-            mutate(son2, probability);
+            mutate(son1, mutationProbability);
+            mutate(son2, mutationProbability);
             
             addNewChromossomeToPopulation(son1);
             addNewChromossomeToPopulation(son2);
+        }
+
+        private void breed(Chromossome father, Chromossome mother, float mutationProbability = 0.2f) {
+            int i;
+            
+            Chromossome son1;
+            Chromossome son2;
+
+            bool[] mask;
+            bool[] encodedFatherChromossome;
+            bool[] encodedMotherChromossome;
+
+            bool[] encodedSon1Chromossome = new bool[37];
+            bool[] encodedSon2Chromossome = new bool[37];
+
+            mask = generateMask(37, 0.5f);
+            
+            encodedFatherChromossome = father.encodedChromossome;
+            encodedMotherChromossome = mother.encodedChromossome;
+            
+            
+            for (i = 0; i < 37; i++) {
+                if (mask[i]) {
+                    encodedSon1Chromossome[i] = encodedFatherChromossome[i];
+                    encodedSon2Chromossome[i] = encodedMotherChromossome[i];
+                }
+
+                else {
+                    encodedSon1Chromossome[i] = encodedMotherChromossome[i];
+                    encodedSon2Chromossome[i] = encodedFatherChromossome[i];
+                }
+            }
+            
+            son1 = new Chromossome(encodedSon1Chromossome);
+            son2 = new Chromossome(encodedSon2Chromossome);
+            
+            mutate(son1, mutationProbability);
+            mutate(son2, mutationProbability);
+            
+            addNewChromossomeToPopulation(son1);
+            addNewChromossomeToPopulation(son2);
+        }
+
+        private bool[] generateMask(int maskSize, float trueProbability) {
+            int i;
+            
+            float randomValue;
+            
+            bool[] mask = new bool[maskSize];
+            
+            
+            for (i = 0; i < maskSize; i++) {
+                randomValue = (float)Randomizer.NextDouble();
+                
+                if (randomValue <= trueProbability) {
+                    mask[i] = true;
+                }
+                else {
+                    mask[i] = false;
+                }
+                
+            }
+
+            return mask;
         }
 
         void addNewChromossomeToPopulation(Chromossome c) {
