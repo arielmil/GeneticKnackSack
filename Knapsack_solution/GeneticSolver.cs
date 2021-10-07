@@ -28,7 +28,7 @@ namespace Knapsack_solution {
             
             while (true) {
                 if (i >= genRangeForElitismDetector * 2) {
-                    if (elitismDetector()) {
+                    if (elitismDetector(genRangeForElitismDetector)) {
                         break;
                     }
                 }
