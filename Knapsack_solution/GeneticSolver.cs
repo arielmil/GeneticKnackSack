@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace Knapsack_solution {
     public class GeneticSolver {
@@ -14,16 +15,24 @@ namespace Knapsack_solution {
 
         private float bestScore = 0.0f;
 
+        private List<float> bestsHistory = new List<float>();
+
         public GeneticSolver(int maxPopulationSize = 1000, int maxAllowedGeneration = 100) {
             this.maxAllowedGeneration = maxAllowedGeneration;
         }
         
-        public Backpack Solve() {
+        public Backpack Solve(int genRangeForElitismDetector) {
             int i = 0;
             
             generateFirstGeneration();
             
-            while (i < maxAllowedGeneration) {
+            while (true) {
+                if (i >= genRangeForElitismDetector * 2) {
+                    if (elitismDetector()) {
+                        break;
+                    }
+                }
+                
                 if (i % 2 == 0) {
                     generateFirstGeneration();
                 }
@@ -70,6 +79,7 @@ namespace Knapsack_solution {
                 PopulationBreedingChances.Add(new BreedingChance(c, beingFitness));
             }
             
+            bestsHistory.Add(bestGenerationScore);
             Console.WriteLine($"Best Generation's score: {bestGenerationScore}");
 
             BreedingChance bc;
@@ -89,6 +99,27 @@ namespace Knapsack_solution {
             }
         }
         
+        //Detects if elitism is occurring by checking for unchangeable behavior on genRange last gens
+        private bool elitismDetector(int genRange = 10, float lowerBound = 0.1f, float upperBound = 0.1f) {
+            int i;
+            
+            float totalFitnessScore = 0.0f;
+            float mean = 0.0f;
+            float[] possibleElitists = new float[genRange];
+
+            for (i = 0; i < genRange; i++) {
+                possibleElitists[i] = bestsHistory[bestsHistory.Count - (genRange - i)];
+            }
+
+            for (i = 0; i < genRange; i++) {
+                totalFitnessScore = totalFitnessScore + possibleElitists[i];
+            }
+
+            mean = totalFitnessScore / genRange;
+
+            return (mean >= bestScore - lowerBound && mean <= bestScore + upperBound);
+        }
+        
         private static float fit(Chromossome c) {
             Backpack bp = Chromossome.decodeChromossome(c);
             if (isValidSolution(c)) {
@@ -96,7 +127,7 @@ namespace Knapsack_solution {
             }
             
             //Console.WriteLine($"Invalid Solution !");
-            return 0.0f;
+            return 0.01f;
         }
         
         private static bool isValidSolution(Chromossome c) {
