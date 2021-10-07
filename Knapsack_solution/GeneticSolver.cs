@@ -20,11 +20,33 @@ namespace Knapsack_solution {
         
         public Backpack Solve() {
             int i = 0;
+            int oldBestIsStillBestTimes = 0;
             
             generateFirstGeneration();
-            while (i < maxAllowedGeneration) {
+            
+            Chromossome oldBest = Best;
+            float oldBestFitnessScore;
+            
+            while (true) {
+                oldBestFitnessScore = fit(oldBest);
                 generateNextGeneration();
-                i++;
+
+                if (oldBestFitnessScore == bestScore) {
+                    oldBestIsStillBestTimes++;
+                }
+
+                else {
+                    if (oldBestIsStillBestTimes > 0) {
+                        oldBestIsStillBestTimes--;
+                        oldBest = Best;
+                    }
+                }
+
+
+                if (oldBestIsStillBestTimes == 20) {
+                    break;
+                }
+                //i++;
             }
             
             //Console.WriteLine($"Best solution fitness is: {bestScore}");
@@ -36,16 +58,13 @@ namespace Knapsack_solution {
             for (i = 0; i < maxAllowedGeneration; i++) {
                 createNewBeing();
             }
+
+            fitGenerationAndReturnTotalFitness();
         }
-        
-        //Roulette like method
-        void generateNextGeneration(int maxPopulationSize = 998) {
-            int i;
-            
-            Console.WriteLine($"Best score so far: {bestScore}");
+
+        private float fitGenerationAndReturnTotalFitness() {
             float totalFitness = 0.0f;
             float beingFitness;
-            float drawnFloat;
             
             foreach (Chromossome c in Population) {
                 beingFitness = fit(c);
@@ -59,6 +78,19 @@ namespace Knapsack_solution {
                 PopulationBreedingChances.Add(new BreedingChance(c, beingFitness));
             }
 
+            return totalFitness;
+        }
+        
+        //Roulette like method
+        void generateNextGeneration(int maxPopulationSize = 998) {
+            int i;
+            
+            Console.WriteLine($"Best score so far: {bestScore}");
+            float totalFitness;
+            float drawnFloat;
+
+            totalFitness = fitGenerationAndReturnTotalFitness();
+            
             BreedingChance bc;
             for (i = 0; i < PopulationBreedingChances.Count; i++) {
                 bc = PopulationBreedingChances[i];
@@ -70,7 +102,7 @@ namespace Knapsack_solution {
                     if (currentPopulationSize >= maxPopulationSize) {
                         kill100LowestsFitnessScoresBeings();
                     }
-                    breed(Best, bc.chromossome, 10, 0.07f);
+                    breed(Best, bc.chromossome, 10, 0.02f);
                 }
                 
             }
@@ -91,7 +123,7 @@ namespace Knapsack_solution {
             return !(bp.currentWeight > bp.capacity);
         }
         
-        private void createNewBeing(float probability = 0.7f) {
+        private void createNewBeing(float probability = 0.1f) {
             int i;
             
             float drawnFloat;
@@ -113,7 +145,6 @@ namespace Knapsack_solution {
             }
 
             c = new Chromossome(encodedChromossome);
-            Backpack bp = Chromossome.decodeChromossome(c);
             addNewChromossomeToPopulation(c);
         }
         
@@ -131,7 +162,7 @@ namespace Knapsack_solution {
             }
         }
 
-        private void breed(Chromossome father, Chromossome mother, int slicingIndex = 10, float probability = 0.05f) {
+        private void breed(Chromossome father, Chromossome mother, int slicingIndex = 10, float probability = 0.2f) {
             int i;
             
             Chromossome son1;
@@ -175,7 +206,7 @@ namespace Knapsack_solution {
             Population.Remove(c);
             currentPopulationSize = Population.Count;
         }
-
+        
         private void kill100LowestsFitnessScoresBeings() {
             int i = 0;
             

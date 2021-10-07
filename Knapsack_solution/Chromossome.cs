@@ -6,7 +6,7 @@ namespace Knapsack_solution {
         public bool[] encodedChromossome { get; private set; }
         
         public Chromossome(Backpack bp) {
-            encodedChromossome = new bool[22];
+            encodedChromossome = new bool[37];
             encodeChromossome(bp);
         }
 

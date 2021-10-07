@@ -5,7 +5,7 @@ using System.Linq;
 namespace Knapsack_solution {
     public class Backpack {
         public int itemsQuantity { get; private set; }
-        public float capacity { get; } = 89.0f;
+        public float capacity { get; } = 50.0f;
         public float currentWeight { get; private set; } = 0.0f;
         public float currentValue { get; private set; } = 0.0f;
         public Item[] Items { get; private set; }
