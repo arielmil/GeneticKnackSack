@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 namespace Knapsack_solution {
     public class GeneticSolver {
@@ -14,33 +13,53 @@ namespace Knapsack_solution {
         private int maxAllowedGeneration;
 
         private float bestScore = 0.0f;
+        public float mutationProbability;
+        public List<float> statesFitnessScores { get; set; } = new List<float>();
 
         private List<float> bestsHistory = new List<float>();
 
-        public GeneticSolver(int maxPopulationSize = 1000, int maxAllowedGeneration = 100) {
+        public GeneticSolver(int maxPopulationSize = 1000, int maxAllowedGeneration = 100, float mutationProbability = 0.05f) {
             this.maxAllowedGeneration = maxAllowedGeneration;
         }
         
-        public Backpack Solve(int genRangeForElitismDetector) {
+        public Backpack Solve(int genRangeForElitismDetector, float mutationGrowthRate = 1.0f, bool mutationRateStatic = true) {
             int i = 0;
-            
             generateFirstGeneration();
-            
-            while (true) {
-                if (i >= genRangeForElitismDetector * 2) {
-                    if (elitismDetector(genRangeForElitismDetector)) {
-                        break;
+
+            if (mutationRateStatic) {
+                while (i < maxAllowedGeneration) {
+                    if (i >= genRangeForElitismDetector * 2) {
+                        if (i >= maxAllowedGeneration - 15) {
+                            mutationProbability = (float) (Randomizer.NextDouble()  * (0.0 - 0.5) + 0.5);
+                        }
                     }
-                }
                 
-                if (i % 2 == 0) {
-                    generateFirstGeneration();
+                    if (i % 2 == 0) {
+                        generateFirstGeneration();
+                    }
+                    generateNextGeneration();
+                    i = i + 2;
                 }
-                generateNextGeneration();
-                i = i + 2;
+            }
+
+            else {
+                while (true) {
+                    if (i >= genRangeForElitismDetector * 2) {
+                        if (elitismDetector(genRangeForElitismDetector)) {
+                            mutationProbability = mutationProbability * mutationGrowthRate;
+                            mutationGrowthRate = mutationGrowthRate * 1.5f;
+                        }
+                    }
+                
+                    if (i % 2 == 0) {
+                        generateFirstGeneration();
+                    }
+                    generateNextGeneration();
+                    i = i + 2;
+                }
             }
             
-            Console.WriteLine($"Best solution fitness is: {bestScore}");
+            Console.WriteLine($"\nBest solution fitness is: {bestScore}");
             return Chromossome.decodeChromossome(Best);
         }
         
@@ -120,10 +139,15 @@ namespace Knapsack_solution {
             return (mean >= bestScore - lowerBound && mean <= bestScore + upperBound);
         }
         
-        private static float fit(Chromossome c) {
+        private float fit(Chromossome c) {
+            float bpCurrentValue;
             Backpack bp = Chromossome.decodeChromossome(c);
+            
             if (isValidSolution(c)) {
-                return bp.currentValue;
+                bpCurrentValue = bp.currentValue;
+                
+                statesFitnessScores.Add(bpCurrentValue);
+                return bpCurrentValue;
             }
             
             //Console.WriteLine($"Invalid Solution !");
@@ -165,12 +189,12 @@ namespace Knapsack_solution {
             addNewChromossomeToPopulation(c2);
         }
         
-        private void mutate(Chromossome c, float probability) {
+        private void mutate(Chromossome c) {
             float drawnFloat = (float)Randomizer.NextDouble();
             int drawnInt = Randomizer.Next(0, 37);
-            
-            if (probability >= drawnFloat) {
-               c.changeGene(drawnInt);
+
+            if (mutationProbability >= drawnFloat) {
+                c.changeGene(drawnInt);
             }
         }
 
@@ -202,8 +226,8 @@ namespace Knapsack_solution {
             son1 = new Chromossome(encodedSon1Chromossome);
             son2 = new Chromossome(encodedSon2Chromossome);
             
-            mutate(son1, mutationProbability);
-            mutate(son2, mutationProbability);
+            mutate(son1);
+            mutate(son2);
             
             addNewChromossomeToPopulation(son1);
             addNewChromossomeToPopulation(son2);
@@ -243,8 +267,8 @@ namespace Knapsack_solution {
             son1 = new Chromossome(encodedSon1Chromossome);
             son2 = new Chromossome(encodedSon2Chromossome);
             
-            mutate(son1, mutationProbability);
-            mutate(son2, mutationProbability);
+            mutate(son1);
+            mutate(son2);
             
             addNewChromossomeToPopulation(son1);
             addNewChromossomeToPopulation(son2);
@@ -299,6 +323,10 @@ namespace Knapsack_solution {
                 
                 i++;
             }
+        }
+
+        public float[] getStatesFitnessInArrayForm() {
+            return statesFitnessScores.ToArray();
         }
         
         private struct BreedingChance {

@@ -11,3 +11,8 @@
 /home/ariel/Desktop/8o_periodo/AI/Genetic_programming/Genetic_algorithm/Knapsack_problem/Knapsack_solution/Knapsack_solution/obj/Debug/netcoreapp3.1/Knapsack_solution.dll
 /home/ariel/Desktop/8o_periodo/AI/Genetic_programming/Genetic_algorithm/Knapsack_problem/Knapsack_solution/Knapsack_solution/obj/Debug/netcoreapp3.1/Knapsack_solution.pdb
 /home/ariel/Desktop/8o_periodo/AI/Genetic_programming/Genetic_algorithm/Knapsack_problem/Knapsack_solution/Knapsack_solution/obj/Debug/netcoreapp3.1/Knapsack_solution.genruntimeconfig.cache
+/home/ariel/Desktop/8o_periodo/AI/Genetic_programming/Genetic_algorithm/Knapsack_problem/Knapsack_solution/Knapsack_solution/bin/Debug/netcoreapp3.1/System.Runtime.CompilerServices.Unsafe.dll
+/home/ariel/Desktop/8o_periodo/AI/Genetic_programming/Genetic_algorithm/Knapsack_problem/Knapsack_solution/Knapsack_solution/bin/Debug/netcoreapp3.1/System.Text.Encodings.Web.dll
+/home/ariel/Desktop/8o_periodo/AI/Genetic_programming/Genetic_algorithm/Knapsack_problem/Knapsack_solution/Knapsack_solution/bin/Debug/netcoreapp3.1/System.Text.Json.dll
+/home/ariel/Desktop/8o_periodo/AI/Genetic_programming/Genetic_algorithm/Knapsack_problem/Knapsack_solution/Knapsack_solution/bin/Debug/netcoreapp3.1/Vse.Web.Serialization.dll
+/home/ariel/Desktop/8o_periodo/AI/Genetic_programming/Genetic_algorithm/Knapsack_problem/Knapsack_solution/Knapsack_solution/obj/Debug/netcoreapp3.1/Knapsack_solution.csproj.CopyComplete

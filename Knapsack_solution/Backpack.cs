@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace Knapsack_solution {
     public class Backpack {
+        public int itemsLen;
         public int itemsQuantity { get; private set; }
         public float capacity { get; } = 50.0f;
         public float currentWeight { get; private set; } = 0.0f;
@@ -30,7 +31,6 @@ namespace Knapsack_solution {
         };
         
         public Backpack() {
-            itemsQuantity = 0;
             currentWeight = 0.0f;
             currentValue = 0.0f;
             Items = new Item[37];
@@ -48,6 +48,7 @@ namespace Knapsack_solution {
                 Items[pos] = new Item(itemName, ItemsWeights[pos], ItemsValues[pos]);
                 currentWeight = currentWeight + Items[pos].weight;
                 currentValue = currentValue + Items[pos].value;
+                itemsQuantity++;
             }
             else {
                 throw (new Exception("Error: Invalid item name !"));
@@ -65,6 +66,7 @@ namespace Knapsack_solution {
                 
                 currentWeight = currentWeight - Items[pos].weight;
                 currentValue = currentValue - Items[pos].value;
+                itemsQuantity--;
             }
             else {
                 throw (new Exception("Error: Invalid item name !"));
@@ -83,6 +85,7 @@ namespace Knapsack_solution {
                 }
                 
             }
+            Console.WriteLine($"Total items count: {itemsQuantity}");
             
             for (i = 0; i < ItemsValues.Length; i++) {
                 sum = ItemsValues[i] + sum;
