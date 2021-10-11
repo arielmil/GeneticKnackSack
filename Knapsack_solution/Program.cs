@@ -12,27 +12,36 @@ namespace Knapsack_solution
             GeneticSolver GS = new GeneticSolver();
             Backpack solution = GS.Solve(20);
             
-            DelegateToPython(GS.getStatesFitnessInArrayForm());
+            plotInPython(GS.getStatesFitnessInArrayForm());
             solution.openBackpack();
         }
 
-        static void DelegateToPython(float []AllStatesFitnessScore) {
+        static void plotInPython(float []AllStatesFitnessScore) {
             string jsonString = JsonSerializer.Serialize(AllStatesFitnessScore);
             
             ProcessStartInfo psi = new ProcessStartInfo();
             
             psi.FileName = @"/usr/bin/python3";
-            string script = Path.GetFullPath(Path.Combine(".", "..", "..", "..", "..", "graphicalPlotter.py"));
+            string scriptPath = Path.GetFullPath(Path.Combine(".", "..", "..", "..", "..", "graphicalPlotter.py"));
 
-            psi.Arguments = $"\"{script}\" \"{jsonString}\"";
+            psi.Arguments = $"\"{scriptPath}\" \"{jsonString}\"";
             
             psi.CreateNoWindow = false;
-            psi.UseShellExecute = true;
+            psi.UseShellExecute = false;
+            
             using (Process process = Process.Start(psi)) {
                 process.WaitForExit();
             }
             
         }
+
+        static void exportItems() {
+            string[] items = Backpack.exportItemsInStringArray(22);
+            
+            string scriptPath = Path.GetFullPath(Path.Combine(".", "..", "..", "..", "..", "Items.csv"));
+            File.WriteAllLines(scriptPath, items);
+        }
         
     }
+    
 }
