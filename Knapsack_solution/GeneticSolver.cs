@@ -13,7 +13,7 @@ namespace Knapsack_solution {
         private int maxAllowedGeneration;
 
         private float bestScore = 0.0f;
-        public float mutationProbability;
+        public float mutationProbability = 0.05f;
         public List<float> statesFitnessScores { get; set; } = new List<float>();
 
         private List<float> bestsHistory = new List<float>();
@@ -30,7 +30,10 @@ namespace Knapsack_solution {
                 while (i < maxAllowedGeneration) {
                     if (i >= genRangeForElitismDetector * 2) {
                         if (i >= maxAllowedGeneration - 15) {
-                            mutationProbability = (float) (Randomizer.NextDouble()  * (0.0 - 0.5) + 0.5);
+                            if (elitismDetector(genRangeForElitismDetector)) {
+                                killHighestFitnessScoresBeings(10);
+                                mutationProbability = (float) (Randomizer.NextDouble()  * (0.0 - 0.5) + 0.5);
+                            }
                         }
                     }
                 
@@ -56,6 +59,8 @@ namespace Knapsack_solution {
                     }
                     generateNextGeneration();
                     i = i + 2;
+                    
+                    
                 }
             }
             
@@ -82,6 +87,8 @@ namespace Knapsack_solution {
 
             float bestGenerationScore = 0.0f;
             
+            Chromossome localBest = null;
+            
             foreach (Chromossome c in Population) {
                 beingFitness = fit(c);
                 totalFitness = totalFitness + beingFitness;
@@ -93,6 +100,7 @@ namespace Knapsack_solution {
 
                 if (beingFitness > bestGenerationScore) {
                     bestGenerationScore = beingFitness;
+                    localBest = c;
                 }
                 
                 PopulationBreedingChances.Add(new BreedingChance(c, beingFitness));
@@ -110,15 +118,17 @@ namespace Knapsack_solution {
                 
                 if (bc.breedingChance >= drawnFloat) {
                     if (currentPopulationSize >= maxPopulationSize) {
-                        killLowestsFitnessScoresBeings(500);
+                        killLowestsFitnessScoresBeings(100);
                     }
-                    breed(Best, bc.chromossome, 0.05f);
+                    
+                    //mutate(localBest);
+                    breed(localBest, bc.chromossome, mutationProbability);
                 }
                 
             }
         }
         
-        //Detects if elitism is occurring by checking for unchangeable behavior on genRange last gens
+        //Detects if elitism is occurring by checking for unchanged fitness value on genRange last gens
         private bool elitismDetector(int genRange = 10, float lowerBound = 0.1f, float upperBound = 0.1f) {
             int i;
             
@@ -322,6 +332,25 @@ namespace Knapsack_solution {
                 kill(c);
                 
                 i++;
+            }
+        }
+        
+        private void killHighestFitnessScoresBeings(int range) {
+            int i = PopulationBreedingChances.Count;
+            range = i - range;
+            
+            PopulationBreedingChances.Sort(BreedingChance.OrderByFitnessScore);
+            Chromossome c;
+
+            foreach (BreedingChance bc in PopulationBreedingChances) {
+                if (i == range) {
+                    break;
+                }
+                
+                c = bc.chromossome;
+                kill(c);
+                
+                i--;
             }
         }
 

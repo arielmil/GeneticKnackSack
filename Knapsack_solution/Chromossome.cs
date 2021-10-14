@@ -9,6 +9,22 @@ namespace Knapsack_solution {
             encodedChromossome = new bool[37];
             encodeChromossome(bp);
         }
+        
+        public Chromossome(int [] intToBoolArray) {
+            int j = 0;
+            encodedChromossome = new bool[37];
+            
+            foreach (int i in intToBoolArray) {
+                if (i == 0) {
+                    encodedChromossome[j] = false;
+                }
+                else {
+                    encodedChromossome[j] = true;
+                }
+
+                j++;
+            }
+        }
 
         public Chromossome(bool[] encodedChromossome) {
             this.encodedChromossome = encodedChromossome;

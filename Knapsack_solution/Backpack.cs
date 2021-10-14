@@ -76,8 +76,6 @@ namespace Knapsack_solution {
         public void openBackpack() {
             int i;
             
-            float sum = 0.0f;
-            
             Console.WriteLine($"This Backpack weights {currentWeight}kg and contains the following items:");
             foreach (Item item in Items) {
                 if (item != null) {
@@ -85,13 +83,11 @@ namespace Knapsack_solution {
                 }
                 
             }
+            
             Console.WriteLine($"Total items count: {itemsQuantity}");
-            
-            for (i = 0; i < ItemsValues.Length; i++) {
-                sum = ItemsValues[i] + sum;
-            }
-            
-            Console.WriteLine($"Biggest possible value: {sum}");
+            Console.WriteLine($"Backpack value: ${currentValue}");
+            Console.WriteLine($"Total items weight sum: {ItemsWeights.Sum()} kg");
+            Console.WriteLine($"Biggest possible value: ${ItemsValues.Sum()}");
         }
         
         private static int getItemNameInItemmsNames(string itemName) {

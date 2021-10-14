@@ -9,11 +9,13 @@ namespace Knapsack_solution
     {
         GeneticSolver GS = new GeneticSolver();
         static void Main(string[] args) {
-            GeneticSolver GS = new GeneticSolver();
+            GeneticSolver GS = new GeneticSolver(maxAllowedGeneration:110);
             Backpack solution = GS.Solve(20);
             
             plotInPython(GS.getStatesFitnessInArrayForm());
             solution.openBackpack();
+            
+            //testSomethingQuick();
         }
 
         static void plotInPython(float []AllStatesFitnessScore) {
@@ -36,12 +38,17 @@ namespace Knapsack_solution
         }
 
         static void exportItems() {
-            string[] items = Backpack.exportItemsInStringArray(22);
+            string[] items = Backpack.exportItemsInStringArray(37);
             
             string scriptPath = Path.GetFullPath(Path.Combine(".", "..", "..", "..", "..", "Items.csv"));
             File.WriteAllLines(scriptPath, items);
         }
+        private static void testSomethingQuick() {
+            Chromossome c = new Chromossome(new int[] {0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0});
+            (Chromossome.decodeChromossome(c)).openBackpack();
+        }
         
     }
+    
     
 }
