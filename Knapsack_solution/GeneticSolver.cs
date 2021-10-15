@@ -25,20 +25,37 @@ namespace Knapsack_solution {
             this.chromossomeGenesQnt = chromossomeGenesQnt;
         }
         
-        public Backpack Solve(int genRangeForElitismDetector, float mutationGrowthRate = 0.5f, bool mutationRateStatic = true) {
+        public Backpack Solve(int genRangeForElitismDetector, float mutationGrowthRate = 1.5f, bool mutationRateStatic = true, int elitismDetectorActivationInARowLimit = 15) {
+            bool elitismDetectorWasActivatedInLastIteration = false;
+            
             int i = 0;
-            generateFirstGeneration();
+            int elitismDetectorActivatedInARowCont = 0;
 
+            generateFirstGeneration();
+    
             if (mutationRateStatic) {
                 while (i < maxAllowedGeneration) {
                     if (i >= genRangeForElitismDetector * 2) {
                         if (elitismDetector(genRangeForElitismDetector)) {
+                            elitismDetectorWasActivatedInLastIteration = true;
+                            elitismDetectorActivatedInARowCont++;
                             killHighestFitnessScoresBeings(10);
+                            
                             if (mutationProbability <= 0.3) {
-                                mutationProbability = (float) (Randomizer.NextDouble()  * (0.0 - 0.5) + 0.5) + (mutationProbability * mutationGrowthRate);
+                                mutationProbability = (mutationProbability * mutationGrowthRate);
+                            }
+
+                            if (elitismDetectorActivatedInARowCont >= elitismDetectorActivationInARowLimit) {
+                                mutationGrowthRate += 0.01f;
+                                mutationProbability = (mutationProbability * mutationGrowthRate);
                             }
                             
                             Console.WriteLine($"Mutation probability: {mutationProbability}, generation: {currentGeneration}");
+                        }
+                        
+                        else {
+                            elitismDetectorWasActivatedInLastIteration = false;
+                            elitismDetectorActivatedInARowCont = 0;
                         }
                     }
                 

@@ -9,7 +9,7 @@ namespace Knapsack_solution
     {
         static void Main(string[] args) {
             GeneticSolver GS = new GeneticSolver(37, maxAllowedGeneration:110);
-            Backpack solution = GS.Solve(5);
+            Backpack solution = GS.Solve(5, mutationGrowthRate: 1.5f, mutationRateStatic: true, elitismDetectorActivationInARowLimit: 15);
             
             plotInPython(GS.getStatesFitnessInArrayForm());
             solution.openBackpack();
