@@ -5,7 +5,12 @@ using System.Linq;
 namespace Knapsack_solution {
     public class Backpack {
         public int itemsLen;
-        public int itemsQuantity { get; private set; }
+        
+        //Stores how many items this Backpack is carrying
+        public int totalItemsQnt = 0;
+        
+        //Stores how many items instance of Backpack will have
+        public int itemsQnt { get; set; }
         public float capacity { get; } = 50.0f;
         public float currentWeight { get; private set; } = 0.0f;
         public float currentValue { get; private set; } = 0.0f;
@@ -30,10 +35,11 @@ namespace Knapsack_solution {
             15.0f, 15.0f, 9.5f, 7.8f, 5.5f, 2.3f, 22.0f, 1.2f, 25.0f, 6.0f, 9.5f, 0.1f, 7.0f, 10.0f, 4.5f, 10.0f, 9.5f, 14.0f, 2.3f, 15.0f
         };
         
-        public Backpack() {
+        public Backpack(int itemsQnt) {
             currentWeight = 0.0f;
             currentValue = 0.0f;
-            Items = new Item[37];
+            Items = new Item[itemsQnt];
+            this.itemsQnt = itemsQnt;
         }
 
         public bool IsItemInBackpack(Item item) {
@@ -48,7 +54,7 @@ namespace Knapsack_solution {
                 Items[pos] = new Item(itemName, ItemsWeights[pos], ItemsValues[pos]);
                 currentWeight = currentWeight + Items[pos].weight;
                 currentValue = currentValue + Items[pos].value;
-                itemsQuantity++;
+                totalItemsQnt++;
             }
             else {
                 throw (new Exception("Error: Invalid item name !"));
@@ -66,7 +72,7 @@ namespace Knapsack_solution {
                 
                 currentWeight = currentWeight - Items[pos].weight;
                 currentValue = currentValue - Items[pos].value;
-                itemsQuantity--;
+                totalItemsQnt--;
             }
             else {
                 throw (new Exception("Error: Invalid item name !"));
@@ -84,7 +90,7 @@ namespace Knapsack_solution {
                 
             }
             
-            Console.WriteLine($"Total items count: {itemsQuantity}");
+            Console.WriteLine($"Total items count: {totalItemsQnt}");
             Console.WriteLine($"Backpack value: ${currentValue}");
             Console.WriteLine($"Total items weight sum: {ItemsWeights.Sum()} kg");
             Console.WriteLine($"Biggest possible value: ${ItemsValues.Sum()}");
@@ -94,8 +100,8 @@ namespace Knapsack_solution {
             return Array.IndexOf(ItemsNames, itemName);
         }
 
-        public static string getNameInPosition(int pos) {
-            if (pos >= 0 && pos <= 37) {
+        public static string getNameInPosition(int pos, int itemsQnt) {
+            if (pos >= 0 && pos <= itemsQnt) {
                 return ItemsNames[pos];
             }
             else {

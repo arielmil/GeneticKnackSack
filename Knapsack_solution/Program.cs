@@ -7,10 +7,9 @@ namespace Knapsack_solution
 {
     class Program
     {
-        GeneticSolver GS = new GeneticSolver();
         static void Main(string[] args) {
-            GeneticSolver GS = new GeneticSolver(maxAllowedGeneration:110);
-            Backpack solution = GS.Solve(20);
+            GeneticSolver GS = new GeneticSolver(37, maxAllowedGeneration:110);
+            Backpack solution = GS.Solve(5);
             
             plotInPython(GS.getStatesFitnessInArrayForm());
             solution.openBackpack();
@@ -45,7 +44,7 @@ namespace Knapsack_solution
         }
         private static void testSomethingQuick() {
             Chromossome c = new Chromossome(new int[] {0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0});
-            (Chromossome.decodeChromossome(c)).openBackpack();
+            (Chromossome.decodeChromossome(c, 37)).openBackpack();
         }
         
     }

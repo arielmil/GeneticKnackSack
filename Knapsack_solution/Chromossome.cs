@@ -4,15 +4,18 @@ namespace Knapsack_solution {
 
     public class Chromossome {
         public bool[] encodedChromossome { get; private set; }
-        
+        private int genesQnt;
         public Chromossome(Backpack bp) {
-            encodedChromossome = new bool[37];
+            genesQnt = bp.itemsQnt;
+            encodedChromossome = new bool[genesQnt];
             encodeChromossome(bp);
         }
         
         public Chromossome(int [] intToBoolArray) {
+            genesQnt = intToBoolArray.Length;
+            
             int j = 0;
-            encodedChromossome = new bool[37];
+            encodedChromossome = new bool[genesQnt];
             
             foreach (int i in intToBoolArray) {
                 if (i == 0) {
@@ -28,6 +31,7 @@ namespace Knapsack_solution {
 
         public Chromossome(bool[] encodedChromossome) {
             this.encodedChromossome = encodedChromossome;
+            genesQnt = encodedChromossome.Length;
         }
 
         private void encodeChromossome(Backpack bp) {
@@ -40,16 +44,16 @@ namespace Knapsack_solution {
             }
         }
 
-        public static Backpack decodeChromossome(Chromossome c) {
+        public static Backpack decodeChromossome(Chromossome c, int genesQnt) {
             int i;
             string name;
 
-            Backpack bp = new Backpack();
+            Backpack bp = new Backpack(genesQnt);
 
-            for (i = 0; i < 37; i++) {
+            for (i = 0; i < genesQnt; i++) {
 
                 if (c.encodedChromossome[i]) {
-                    name = Backpack.getNameInPosition(i);
+                    name = Backpack.getNameInPosition(i, genesQnt);
                     bp.pack(name);
                 }
             }
@@ -58,7 +62,7 @@ namespace Knapsack_solution {
         }
 
         public void changeGene(int geneNumber) {
-            if (geneNumber >= 0 && geneNumber <= 37) {
+            if (geneNumber >= 0 && geneNumber <= genesQnt) {
                 encodedChromossome[geneNumber] = !encodedChromossome[geneNumber];
             }
 

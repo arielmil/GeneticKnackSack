@@ -11,6 +11,8 @@ namespace Knapsack_solution {
         
         private int currentPopulationSize = 0;
         private int maxAllowedGeneration;
+        private int currentGeneration = 0;
+        private int chromossomeGenesQnt;
 
         private float bestScore = 0.0f;
         public float mutationProbability = 0.05f;
@@ -18,22 +20,25 @@ namespace Knapsack_solution {
 
         private List<float> bestsHistory = new List<float>();
 
-        public GeneticSolver(int maxPopulationSize = 1000, int maxAllowedGeneration = 100, float mutationProbability = 0.05f) {
+        public GeneticSolver(int chromossomeGenesQnt, int maxPopulationSize = 1000, int maxAllowedGeneration = 100, float mutationProbability = 0.05f) {
             this.maxAllowedGeneration = maxAllowedGeneration;
+            this.chromossomeGenesQnt = chromossomeGenesQnt;
         }
         
-        public Backpack Solve(int genRangeForElitismDetector, float mutationGrowthRate = 1.0f, bool mutationRateStatic = true) {
+        public Backpack Solve(int genRangeForElitismDetector, float mutationGrowthRate = 0.5f, bool mutationRateStatic = true) {
             int i = 0;
             generateFirstGeneration();
 
             if (mutationRateStatic) {
                 while (i < maxAllowedGeneration) {
                     if (i >= genRangeForElitismDetector * 2) {
-                        if (i >= maxAllowedGeneration - 15) {
-                            if (elitismDetector(genRangeForElitismDetector)) {
-                                killHighestFitnessScoresBeings(10);
-                                mutationProbability = (float) (Randomizer.NextDouble()  * (0.0 - 0.5) + 0.5);
+                        if (elitismDetector(genRangeForElitismDetector)) {
+                            killHighestFitnessScoresBeings(10);
+                            if (mutationProbability <= 0.3) {
+                                mutationProbability = (float) (Randomizer.NextDouble()  * (0.0 - 0.5) + 0.5) + (mutationProbability * mutationGrowthRate);
                             }
+                            
+                            Console.WriteLine($"Mutation probability: {mutationProbability}, generation: {currentGeneration}");
                         }
                     }
                 
@@ -42,6 +47,7 @@ namespace Knapsack_solution {
                     }
                     generateNextGeneration();
                     i = i + 2;
+                    currentGeneration = i;
                 }
             }
 
@@ -65,7 +71,7 @@ namespace Knapsack_solution {
             }
             
             Console.WriteLine($"\nBest solution fitness is: {bestScore}");
-            return Chromossome.decodeChromossome(Best);
+            return Chromossome.decodeChromossome(Best, chromossomeGenesQnt);
         }
         
         void generateFirstGeneration() {
@@ -120,8 +126,10 @@ namespace Knapsack_solution {
                     if (currentPopulationSize >= maxPopulationSize) {
                         killLowestsFitnessScoresBeings(100);
                     }
-                    
-                    //mutate(localBest);
+
+                    if (currentGeneration >= maxAllowedGeneration - 30) {
+                        mutate(localBest);
+                    }
                     breed(localBest, bc.chromossome, mutationProbability);
                 }
                 
@@ -151,7 +159,7 @@ namespace Knapsack_solution {
         
         private float fit(Chromossome c) {
             float bpCurrentValue;
-            Backpack bp = Chromossome.decodeChromossome(c);
+            Backpack bp = Chromossome.decodeChromossome(c, chromossomeGenesQnt);
             
             if (isValidSolution(c)) {
                 bpCurrentValue = bp.currentValue;
@@ -161,11 +169,11 @@ namespace Knapsack_solution {
             }
             
             //Console.WriteLine($"Invalid Solution !");
-            return 0.01f;
+            return 0.0f;
         }
         
-        private static bool isValidSolution(Chromossome c) {
-            Backpack bp = Chromossome.decodeChromossome(c);
+        private bool isValidSolution(Chromossome c) {
+            Backpack bp = Chromossome.decodeChromossome(c, chromossomeGenesQnt);
             return !(bp.currentWeight > bp.capacity);
         }
         
@@ -174,11 +182,11 @@ namespace Knapsack_solution {
             
             float drawnFloat;
             
-            bool[] encodedChromossome = new bool[37];
+            bool[] encodedChromossome = new bool[chromossomeGenesQnt];
             
             Chromossome c;
             
-            for (i = 0; i < 37; i++) {
+            for (i = 0; i < chromossomeGenesQnt; i++) {
                 drawnFloat = (float)Randomizer.NextDouble();
                 
                 if (itemAcceptanceProbability >= drawnFloat) {
@@ -201,11 +209,12 @@ namespace Knapsack_solution {
         
         private void mutate(Chromossome c) {
             float drawnFloat = (float)Randomizer.NextDouble();
-            int drawnInt = Randomizer.Next(0, 37);
+            int drawnInt = Randomizer.Next(0, chromossomeGenesQnt);
 
-            if (mutationProbability >= drawnFloat) {
+            if (mutationProbability >= drawnFloat && (currentGeneration == maxAllowedGeneration - 1)) {
                 c.changeGene(drawnInt);
             }
+            
         }
 
         private void breed(Chromossome father, Chromossome mother, int slicingIndex = 10, float mutationProbability = 0.2f) {
@@ -217,8 +226,8 @@ namespace Knapsack_solution {
             bool[] encodedFatherChromossome;
             bool[] encodedMotherChromossome;
 
-            bool[] encodedSon1Chromossome = new bool[37];
-            bool[] encodedSon2Chromossome = new bool[37];
+            bool[] encodedSon1Chromossome = new bool[chromossomeGenesQnt];
+            bool[] encodedSon2Chromossome = new bool[chromossomeGenesQnt];
             
             encodedFatherChromossome = father.encodedChromossome;
             encodedMotherChromossome = mother.encodedChromossome;
@@ -253,16 +262,16 @@ namespace Knapsack_solution {
             bool[] encodedFatherChromossome;
             bool[] encodedMotherChromossome;
 
-            bool[] encodedSon1Chromossome = new bool[37];
-            bool[] encodedSon2Chromossome = new bool[37];
+            bool[] encodedSon1Chromossome = new bool[chromossomeGenesQnt];
+            bool[] encodedSon2Chromossome = new bool[chromossomeGenesQnt];
 
-            mask = generateMask(37, 0.5f);
+            mask = generateMask(chromossomeGenesQnt, 0.5f);
             
             encodedFatherChromossome = father.encodedChromossome;
             encodedMotherChromossome = mother.encodedChromossome;
             
             
-            for (i = 0; i < 37; i++) {
+            for (i = 0; i < chromossomeGenesQnt; i++) {
                 if (mask[i]) {
                     encodedSon1Chromossome[i] = encodedFatherChromossome[i];
                     encodedSon2Chromossome[i] = encodedMotherChromossome[i];
