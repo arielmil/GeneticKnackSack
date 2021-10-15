@@ -3,16 +3,20 @@ using System;
 namespace Knapsack_solution {
 
     public class Chromossome {
+
+        private int chromossomeSize;
         public bool[] encodedChromossome { get; private set; }
         
-        public Chromossome(Backpack bp) {
-            encodedChromossome = new bool[37];
+        public Chromossome(Backpack bp, int chromossomeSize) {
+            this.chromossomeSize = chromossomeSize;
+            encodedChromossome = new bool[chromossomeSize];
             encodeChromossome(bp);
         }
         
         public Chromossome(int [] intToBoolArray) {
             int j = 0;
-            encodedChromossome = new bool[37];
+            chromossomeSize = intToBoolArray.Length;
+            encodedChromossome = new bool[chromossomeSize];
             
             foreach (int i in intToBoolArray) {
                 if (i == 0) {
@@ -27,6 +31,7 @@ namespace Knapsack_solution {
         }
 
         public Chromossome(bool[] encodedChromossome) {
+            chromossomeSize = encodedChromossome.Length;
             this.encodedChromossome = encodedChromossome;
         }
 
@@ -46,7 +51,7 @@ namespace Knapsack_solution {
 
             Backpack bp = new Backpack();
 
-            for (i = 0; i < 37; i++) {
+            for (i = 0; i < c.chromossomeSize; i++) {
 
                 if (c.encodedChromossome[i]) {
                     name = Backpack.getNameInPosition(i);
@@ -58,7 +63,7 @@ namespace Knapsack_solution {
         }
 
         public void changeGene(int geneNumber) {
-            if (geneNumber >= 0 && geneNumber <= 37) {
+            if (geneNumber >= 0 && geneNumber <= chromossomeSize) {
                 encodedChromossome[geneNumber] = !encodedChromossome[geneNumber];
             }
 

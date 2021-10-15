@@ -7,9 +7,9 @@ namespace Knapsack_solution
 {
     class Program
     {
-        GeneticSolver GS = new GeneticSolver();
+        GeneticSolver GS = new GeneticSolver(37, 110);
         static void Main(string[] args) {
-            GeneticSolver GS = new GeneticSolver(maxAllowedGeneration:110);
+            GeneticSolver GS = new GeneticSolver(37, maxAllowedGeneration:110);
             Backpack solution = GS.Solve(20);
             
             plotInPython(GS.getStatesFitnessInArrayForm());
