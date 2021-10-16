@@ -8,19 +8,16 @@ namespace Knapsack_solution {
         public bool[] encodedChromossome { get; private set; }
         
         private Random Randomizer;
-
-        public float mutationProbability { get; set; }
         
-        public Chromossome(Backpack bp, Random Randomizer, int chromossomeSize, float mutationProbability) {
+        public Chromossome(Random Randomizer, Backpack bp, int chromossomeSize) {
             this.chromossomeSize = chromossomeSize;
-            this.mutationProbability = mutationProbability;
             this.Randomizer = Randomizer;
             
             encodedChromossome = new bool[chromossomeSize];
             encodeChromossome(bp);
         }
         
-        public Chromossome( Random Randomizer, int [] intToBoolArray, float mutationProbability) {
+        public Chromossome(Random Randomizer, int [] intToBoolArray) {
             int j = 0;
             chromossomeSize = intToBoolArray.Length;
             encodedChromossome = new bool[chromossomeSize];
@@ -36,13 +33,11 @@ namespace Knapsack_solution {
                 j++;
             }
             
-            this.mutationProbability = mutationProbability;
             this.Randomizer = Randomizer;
         }
 
-        public Chromossome( Random Randomizer, bool[] encodedChromossome, float mutationProbability) {
+        public Chromossome(Random Randomizer, bool[] encodedChromossome) {
             this.encodedChromossome = encodedChromossome;
-            this.mutationProbability = mutationProbability;
             this.Randomizer = Randomizer;
             
             chromossomeSize = encodedChromossome.Length;
@@ -75,11 +70,12 @@ namespace Knapsack_solution {
             return bp;
         }
         
-        public void mutate() {
+        public void mutate(float mutationProbability) {
             float drawnFloat = (float)Randomizer.NextDouble();
             int drawnInt = Randomizer.Next(0, chromossomeSize);
 
             if (mutationProbability >= drawnFloat) {
+                Console.WriteLine("Mutation occurred !");
                 changeGene(drawnInt);
             }
         }

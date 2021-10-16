@@ -13,7 +13,7 @@ namespace Knapsack_solution {
         private int maxAllowedGeneration;
 
         private float bestScore = 0.0f;
-        private float mutationProbability = 0.05f;
+        private float mutationProbability;
 
         public delegate float FIT(Chromossome c);
         private FIT Fit; 
@@ -30,21 +30,18 @@ namespace Knapsack_solution {
         private List<float> statesFitnessScores { get; set; } = new List<float>();
 
         private List<float> bestsHistory = new List<float>();
-
+        
         // ReSharper disable once UnusedParameter.Local
-        public GeneticSolver(int maxPopulationSize = 1000, int maxAllowedGeneration = 100, float mutationProbability = 0.05f) {
+        public GeneticSolver(FIT fit,  ISVALIDSOLUTION isValidSolution, BREED breed, CREATENEWBEING createnewbeing, float mutationProbability, Random Randomizer, int maxPopulationSize = 1000, int maxAllowedGeneration = 100) {
             this.maxAllowedGeneration = maxAllowedGeneration;
-        }
-
-        // ReSharper disable once UnusedParameter.Local
-        public GeneticSolver(FIT fit,  ISVALIDSOLUTION isValidSolution, BREED breed, CREATENEWBEING createnewbeing, Random Randomizer, int maxPopulationSize = 1000, int maxAllowedGeneration = 100, float mutationProbability = 0.05f) {
+            this.mutationProbability = mutationProbability;
+            this.Randomizer = Randomizer;
+            
             Fit = fit;
             ISValidSolution = isValidSolution;
             Breed = breed;
             CreateNewBeing = createnewbeing;
             
-            this.maxAllowedGeneration = maxAllowedGeneration;
-            this.Randomizer = Randomizer;
         }
         
         public Chromossome Solve(int genRangeForElitismDetector, float mutationGrowthRate = 1.0f, bool mutationRateStatic = true) {
