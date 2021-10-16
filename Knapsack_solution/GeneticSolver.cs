@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Knapsack_solution {
     public class GeneticSolver {
@@ -7,25 +8,46 @@ namespace Knapsack_solution {
         private Chromossome Best;
 
         private List <BreedingChance> PopulationBreedingChances = new List<BreedingChance>();
-        private Random Randomizer = new Random();
-
-        private int chromossomeSize;
+        private Random Randomizer;
         private int currentPopulationSize = 0;
         private int maxAllowedGeneration;
 
         private float bestScore = 0.0f;
-        public float mutationProbability = 0.05f;
-        public List<float> statesFitnessScores { get; set; } = new List<float>();
+        private float mutationProbability = 0.05f;
+
+        public delegate float FIT(Chromossome c);
+        private FIT Fit; 
+        
+        public delegate bool ISVALIDSOLUTION(Chromossome c);
+        private ISVALIDSOLUTION ISValidSolution;
+        
+        public delegate Chromossome[] BREED(Chromossome father, Chromossome mother, float mutationProbability = 0.2f);
+        private BREED Breed;
+        
+        public delegate Chromossome CREATENEWBEING();
+        private CREATENEWBEING CreateNewBeing;
+        
+        private List<float> statesFitnessScores { get; set; } = new List<float>();
 
         private List<float> bestsHistory = new List<float>();
 
-        public GeneticSolver(int chromossomeSize, int maxPopulationSize = 1000, int maxAllowedGeneration = 100, float mutationProbability = 0.05f) {
+        // ReSharper disable once UnusedParameter.Local
+        public GeneticSolver(int maxPopulationSize = 1000, int maxAllowedGeneration = 100, float mutationProbability = 0.05f) {
             this.maxAllowedGeneration = maxAllowedGeneration;
-            this.chromossomeSize = chromossomeSize;
+        }
 
+        // ReSharper disable once UnusedParameter.Local
+        public GeneticSolver(FIT fit,  ISVALIDSOLUTION isValidSolution, BREED breed, CREATENEWBEING createnewbeing, Random Randomizer, int maxPopulationSize = 1000, int maxAllowedGeneration = 100, float mutationProbability = 0.05f) {
+            Fit = fit;
+            ISValidSolution = isValidSolution;
+            Breed = breed;
+            CreateNewBeing = createnewbeing;
+            
+            this.maxAllowedGeneration = maxAllowedGeneration;
+            this.Randomizer = Randomizer;
         }
         
-        public Backpack Solve(int genRangeForElitismDetector, float mutationGrowthRate = 1.0f, bool mutationRateStatic = true) {
+        public Chromossome Solve(int genRangeForElitismDetector, float mutationGrowthRate = 1.0f, bool mutationRateStatic = true) {
             int i = 0;
             generateFirstGeneration();
 
@@ -68,7 +90,26 @@ namespace Knapsack_solution {
             }
             
             Console.WriteLine($"\nBest solution fitness is: {bestScore}");
-            return Chromossome.decodeChromossome(Best);
+            return Best;
+        }
+
+        private void createNewBeing() {
+            addNewChromossomeToPopulation(CreateNewBeing());
+        }
+
+        private void breed(Chromossome father, Chromossome mother) {
+            Chromossome[] array = Breed(father, mother, mutationProbability);
+
+            Chromossome son1 = array[0];
+            Chromossome son2 = array[1];
+            
+            addNewChromossomeToPopulation(son1);
+            addNewChromossomeToPopulation(son2);
+        }
+        
+        // ReSharper disable once UnusedMember.Local
+        private bool isValidSolution(Chromossome c) {
+            return ISValidSolution(c);
         }
         
         void generateFirstGeneration() {
@@ -94,7 +135,7 @@ namespace Knapsack_solution {
             
             foreach (Chromossome c in Population) {
                 beingFitness = fit(c);
-                totalFitness = totalFitness + beingFitness;
+                totalFitness += beingFitness;
 
                 if (beingFitness > bestScore) {
                     bestScore = beingFitness;
@@ -125,13 +166,14 @@ namespace Knapsack_solution {
                     }
                     
                     //mutate(localBest);
-                    breed(localBest, bc.chromossome, mutationProbability);
+                    breed(localBest, bc.chromossome);
                 }
                 
             }
         }
         
         //Detects if elitism is occurring by checking for unchanged fitness value on genRange last gens
+        [SuppressMessage("ReSharper", "RedundantAssignment")]
         private bool elitismDetector(int genRange = 10, float lowerBound = 0.1f, float upperBound = 0.1f) {
             int i;
             
@@ -144,172 +186,26 @@ namespace Knapsack_solution {
             }
 
             for (i = 0; i < genRange; i++) {
-                totalFitnessScore = totalFitnessScore + possibleElitists[i];
+                totalFitnessScore += possibleElitists[i];
             }
 
             mean = totalFitnessScore / genRange;
 
             return (mean >= bestScore - lowerBound && mean <= bestScore + upperBound);
         }
-        
-        private float fit(Chromossome c) {
-            float bpCurrentValue;
-            Backpack bp = Chromossome.decodeChromossome(c);
-            
-            if (isValidSolution(c)) {
-                bpCurrentValue = bp.currentValue;
-                
-                statesFitnessScores.Add(bpCurrentValue);
-                return bpCurrentValue;
-            }
-            
-            //Console.WriteLine($"Invalid Solution !");
-            return 0.01f;
-        }
-        
-        private static bool isValidSolution(Chromossome c) {
-            Backpack bp = Chromossome.decodeChromossome(c);
-            return !(bp.currentWeight > bp.capacity);
-        }
-        
-        private void createNewBeing(float itemAcceptanceProbability = 0.5f) {
-            int i;
-            
-            float drawnFloat;
-            
-            bool[] encodedChromossome = new bool[chromossomeSize];
-            
-            Chromossome c;
-            
-            for (i = 0; i < chromossomeSize; i++) {
-                drawnFloat = (float)Randomizer.NextDouble();
-                
-                if (itemAcceptanceProbability >= drawnFloat) {
-                    encodedChromossome[i] = true;
-                }
-                else {
-                    encodedChromossome[i] = false;
-                }
-                
-            }
 
-            c = new Chromossome(encodedChromossome);
-            addNewChromossomeToPopulation(c);
+        private float fit(Chromossome c) {
+            float fitness = Fit(c);
+            statesFitnessScores.Add(fitness);
+            return fitness;
         }
         
+        // ReSharper disable once UnusedMember.Local
         private void replaceBeing(Chromossome c1, Chromossome c2) {
             Population.Remove(c1);
             addNewChromossomeToPopulation(c2);
         }
         
-        private void mutate(Chromossome c) {
-            float drawnFloat = (float)Randomizer.NextDouble();
-            int drawnInt = Randomizer.Next(0, chromossomeSize);
-
-            if (mutationProbability >= drawnFloat) {
-                c.changeGene(drawnInt);
-            }
-        }
-
-        private void breed(Chromossome father, Chromossome mother, int slicingIndex = 10, float mutationProbability = 0.2f) {
-            int i;
-            
-            Chromossome son1;
-            Chromossome son2;
-
-            bool[] encodedFatherChromossome;
-            bool[] encodedMotherChromossome;
-
-            bool[] encodedSon1Chromossome = new bool[chromossomeSize];
-            bool[] encodedSon2Chromossome = new bool[chromossomeSize];
-            
-            encodedFatherChromossome = father.encodedChromossome;
-            encodedMotherChromossome = mother.encodedChromossome;
-
-            for (i = 0; i < slicingIndex / 2; i++) {
-                encodedSon1Chromossome[i] = encodedFatherChromossome[i];
-                encodedSon2Chromossome[i] = encodedMotherChromossome[i];
-            }
-
-            for (; i < slicingIndex; i++) {
-                encodedSon1Chromossome[i] = encodedMotherChromossome[i];
-                encodedSon2Chromossome[i] = encodedFatherChromossome[i];
-            }
-
-            son1 = new Chromossome(encodedSon1Chromossome);
-            son2 = new Chromossome(encodedSon2Chromossome);
-            
-            mutate(son1);
-            mutate(son2);
-            
-            addNewChromossomeToPopulation(son1);
-            addNewChromossomeToPopulation(son2);
-        }
-
-        private void breed(Chromossome father, Chromossome mother, float mutationProbability = 0.2f) {
-            int i;
-            
-            Chromossome son1;
-            Chromossome son2;
-
-            bool[] mask;
-            bool[] encodedFatherChromossome;
-            bool[] encodedMotherChromossome;
-
-            bool[] encodedSon1Chromossome = new bool[chromossomeSize];
-            bool[] encodedSon2Chromossome = new bool[chromossomeSize];
-
-            mask = generateMask(chromossomeSize, 0.5f);
-            
-            encodedFatherChromossome = father.encodedChromossome;
-            encodedMotherChromossome = mother.encodedChromossome;
-            
-            
-            for (i = 0; i < chromossomeSize; i++) {
-                if (mask[i]) {
-                    encodedSon1Chromossome[i] = encodedFatherChromossome[i];
-                    encodedSon2Chromossome[i] = encodedMotherChromossome[i];
-                }
-
-                else {
-                    encodedSon1Chromossome[i] = encodedMotherChromossome[i];
-                    encodedSon2Chromossome[i] = encodedFatherChromossome[i];
-                }
-            }
-            
-            son1 = new Chromossome(encodedSon1Chromossome);
-            son2 = new Chromossome(encodedSon2Chromossome);
-            
-            mutate(son1);
-            mutate(son2);
-            
-            addNewChromossomeToPopulation(son1);
-            addNewChromossomeToPopulation(son2);
-        }
-
-        private bool[] generateMask(int maskSize, float trueProbability) {
-            int i;
-            
-            float randomValue;
-            
-            bool[] mask = new bool[maskSize];
-            
-            
-            for (i = 0; i < maskSize; i++) {
-                randomValue = (float)Randomizer.NextDouble();
-                
-                if (randomValue <= trueProbability) {
-                    mask[i] = true;
-                }
-                else {
-                    mask[i] = false;
-                }
-                
-            }
-
-            return mask;
-        }
-
         void addNewChromossomeToPopulation(Chromossome c) {
             Population.Add(c);
             currentPopulationSize = Population.Count;
@@ -324,8 +220,7 @@ namespace Knapsack_solution {
             int i = 0;
             
             PopulationBreedingChances.Sort(BreedingChance.OrderByFitnessScore);
-            Chromossome c;
-
+            
             foreach (BreedingChance bc in PopulationBreedingChances) {
                 if (i == range) {
                     break;
@@ -342,8 +237,7 @@ namespace Knapsack_solution {
             range = i - range;
             
             PopulationBreedingChances.Sort(BreedingChance.OrderByFitnessScore);
-            Chromossome c;
-
+            
             foreach (BreedingChance bc in PopulationBreedingChances) {
                 if (i == range) {
                     break;
