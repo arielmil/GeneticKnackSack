@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace Knapsack_solution {
     class Program {
-        static private float mutationProbability = 0.02f;
+        static private float mutationProbability = 0.05f;
         static private int chromossomeSize = 37;
 
         static private Random Randomizer = new Random();

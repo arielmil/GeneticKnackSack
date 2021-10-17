@@ -8,6 +8,8 @@ namespace Knapsack_solution {
         public bool[] encodedChromossome { get; private set; }
         
         private Random Randomizer;
+
+        private Backpack bp;
         
         public Chromossome(Random Randomizer, Backpack bp, int chromossomeSize) {
             this.chromossomeSize = chromossomeSize;
@@ -75,7 +77,6 @@ namespace Knapsack_solution {
             int drawnInt = Randomizer.Next(0, chromossomeSize);
 
             if (mutationProbability >= drawnFloat) {
-                Console.WriteLine("Mutation occurred !");
                 changeGene(drawnInt);
             }
         }
