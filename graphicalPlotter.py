@@ -14,4 +14,3 @@ plt.ylabel('Fitness')
 plt.title('Knapsack problem')
 
 plt.show()
-# isso eh um teste do Guedes
